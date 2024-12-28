@@ -1,4 +1,5 @@
 import React, {useMemo } from "react";
+import PropTypes from "prop-types";
 import { io } from "socket.io-client";
 
 const SocketContext = React.createContext(null);
@@ -16,8 +17,14 @@ export const SocketProvider = (props) => {
   );
   return(
     <SocketContext.Provider value={{socket}}>
-      {/* eslint-disable-next-line */}
       {props.children}
     </SocketContext.Provider>
   )
 };
+
+// Add PropTypes validation
+SocketProvider.propTypes = {
+  children: PropTypes.node.isRequired,
+};
+
+

@@ -1,34 +1,46 @@
-import { useMemo, createContext, useContext } from "react";
+// import { useMemo, createContext, useContext } from "react";
+import React, { useMemo } from "react";
+import PropTypes from "prop-types";
 
-const PeerContenxt = createContext(null);
+const PeerContext = React.createContext(null);
 
-export const usePeer = () => useContext(PeerContenxt);
+// custom hook that uses the peer context
+export const usePeer = () => React.useContext(PeerContext);
 
 export const PeerProvider = (props) => {
   const peer = useMemo(
     () =>
       new RTCPeerConnection({
         iceServers: [
-          {
-            urls: [
-              "stun:stun.l.google.com:19302",
-              "stun:global.stun.l.twilio.com:3478",
-            ],
-          },
+          { urls: "stun:stun.l.google.com:19302" },
+          { urls: "stun:stun.l.google.com:5349" },
+          { urls: "stun:stun1.l.google.com:3478" },
+          { urls: "stun:stun1.l.google.com:5349" },
+          { urls: "stun:stun2.l.google.com:19302" },
+          { urls: "stun:stun2.l.google.com:5349" },
+          { urls: "stun:stun3.l.google.com:3478" },
+          { urls: "stun:stun3.l.google.com:5349" },
+          { urls: "stun:stun4.l.google.com:19302" },
+          { urls: "stun:stun4.l.google.com:5349" },
         ],
       }),
     []
   );
 
-  const createOffer = async() => {
+  const createOffer = async () => {
     const offer = await peer.createOffer();
     await peer.setLocalDescription(offer);
     return offer;
-  }
+  };
   return (
-    <PeerContenxt.Provider value={{ peer, createOffer }}>
-      {/* eslint-disable-next-line */}
+    <PeerContext.Provider value = {{peer, createOffer}}>
       {props.children}
-    </PeerContenxt.Provider>
+    </PeerContext.Provider>
   );
+};
+
+
+// Add PropTypes validation
+PeerProvider.propTypes = {
+  children: PropTypes.node.isRequired,
 };

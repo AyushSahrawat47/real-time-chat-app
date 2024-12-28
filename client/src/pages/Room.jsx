@@ -1,27 +1,37 @@
-import {useEffect, useCallback} from 'react';
-import {useSocket} from '../providers/Socket'
-import {PeerProvider, usePeer} from '../providers/Peer'
+import { useEffect, useCallback } from "react";
+import { useSocket } from "../providers/Socket";
+import { usePeer } from "../providers/Peer";
 
 const Room = () => {
-  const {socket} = useSocket();
-  const {peer, createOffer} = usePeer();
+  const { socket } = useSocket();
+  const { createOffer } = usePeer();
 
-  const handleNewUserJoined = useCallback(async (data) =>{
-    const {emailId} = data;
-    console.log(`${emailId} joined the room`)
-    const offer = await createOffer();
-    socket.emit('call-user', {emailId, offer});
-  }, [createOffer, socket]);
+  const handleNewUserJoined = useCallback(
+    async (data) => {
+      const { emailId } = data;
+      console.log(`${emailId} joined the room`);
+      const offer = await createOffer();
+      socket.emit("call-user", { emailId, offer });
+    },
+    [createOffer, socket]
+  );
+
+  const handleIncomingCall = useCallback((data) => {
+    const { from, offer } = data;
+    console.log("Incoming call from", from, offer);
+  }, []);
 
   useEffect(() => {
-  socket.on('user-joined', handleNewUserJoined)
-  }, [handleNewUserJoined, socket]);
+    socket.on("user-joined", handleNewUserJoined);
+    socket.on("incoming-call", handleIncomingCall);
 
-  return (
-    <div>
-        Room 
-    </div>
-  )
-}
+    return () => {
+      socket.off("user-joined", handleNewUserJoined);
+      socket.off("incoming-call", handleIncomingCall);
+    };
+  }, [handleNewUserJoined, socket, handleIncomingCall]);
 
-export default Room
+  return <div>Room</div>;
+};
+
+export default Room;

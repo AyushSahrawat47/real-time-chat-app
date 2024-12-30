@@ -31,6 +31,11 @@ io.on("connection", (socket) => {
         const socketId = emailToSocketMapping.get(emailId);
         socket.to(socketId).emit('incoming-call', {from: fromEmail, offer});
     })
+    socket.on("call-accepted",(data) => {
+        const {emailId, ans} = data;
+        const socketId = emailToSocketMapping.get(emailId);
+        socket.to(socketId).emit("call-accepted", {ans});
+    })
 });
 
 app.listen(8000, ()=>{

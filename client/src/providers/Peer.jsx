@@ -32,6 +32,7 @@ export const PeerProvider = (props) => {
   const createOffer = async () => {
     const offer = await peer.createOffer();
     await peer.setLocalDescription(offer);
+    console.log("localDescription", peer.localDescription);
     return offer;
   };
 
@@ -39,6 +40,7 @@ export const PeerProvider = (props) => {
     await peer.setRemoteDescription(offer);
     const ans = await peer.createAnswer();
     await peer.setLocalDescription(ans);
+    console.log("localDescription", peer.localDescription);
     return ans;
   };
 

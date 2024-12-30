@@ -17,7 +17,7 @@ const Room = () => {
       const offer = await createOffer();
       socket.emit("call-user", { emailId, offer });
       setRemoteEmailId(emailId);
-    },
+    },  
     [createOffer, socket]
   );
 
@@ -49,12 +49,15 @@ const Room = () => {
     setMyStream(stream);
   }, [setMyStream]);
 
-  const handleNegotiation = useCallback(async()=>{
-    console.log(" oops! negotiation needed")
-    const localOffer = await peer.localDescription; 
-    socket.emit("call-user", { emailId: remoteEmailId, offer: localOffer });
-
- },[peer.localDescription,socket,remoteEmailId])
+  const handleNegotiation = useCallback(async () => {
+    console.log("oops! negotiation needed");
+    const localOffer = peer.localDescription;
+    console.log("localOffer", localOffer);
+    console.log("remoteEmailId", remoteEmailId);
+    if (localOffer) {
+      socket.emit("call-user", { emailId: remoteEmailId, offer: localOffer });
+    }
+  }, [remoteEmailId, peer, socket]);
 
   useEffect(() => {
     socket.on("user-joined", handleNewUserJoined);
